@@ -7,7 +7,7 @@ from app.database import get_db
 from app.dependencies import TenantUserContext, assert_resource_tenant, get_current_tenant_user
 from app.models import Task, TaskStatus, User, UserRole
 from app.schemas import MessageResponse, TaskCreate, TaskResponse, TaskUpdate
-from app.services.email_service import notify_task_assigned
+from app.services.notifications import on_task_assigned
 from app.tenant_filters import tasks_query
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
@@ -68,7 +68,7 @@ def create_task(
     db.refresh(task)
     if task.assigned_to:
         assignee = db.query(User).filter(User.id == task.assigned_to).first()
-        notify_task_assigned(db, ctx.tenant, task, assignee, ctx.user.name)
+        on_task_assigned(db, ctx.tenant, task, assignee, ctx.user.name)
     return _task_to_response(task)
 
 
@@ -99,7 +99,7 @@ def update_task(
     db.refresh(task)
     if task.assigned_to and task.assigned_to != old_assigned_to:
         assignee = db.query(User).filter(User.id == task.assigned_to).first()
-        notify_task_assigned(db, ctx.tenant, task, assignee, ctx.user.name)
+        on_task_assigned(db, ctx.tenant, task, assignee, ctx.user.name)
     return _task_to_response(task)
 
 

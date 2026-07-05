@@ -7,7 +7,7 @@ from app.database import get_db
 from app.dependencies import TenantUserContext, assert_resource_tenant, get_current_tenant_user
 from app.models import Contact, Deal, DealStage, UserRole
 from app.schemas import DealCreate, DealResponse, DealUpdate, MessageResponse
-from app.services.email_service import notify_deal_stage_change
+from app.services.notifications import on_deal_stage_change
 from app.tenant_filters import contacts_query, deals_query
 
 router = APIRouter(prefix="/deals", tags=["deals"])
@@ -86,7 +86,7 @@ def update_deal(
         setattr(deal, key, value)
     db.commit()
     db.refresh(deal)
-    notify_deal_stage_change(db, ctx.tenant, deal, old_stage, deal.stage, ctx.user.name)
+    on_deal_stage_change(db, ctx.tenant, deal, old_stage, deal.stage, ctx.user.name)
     return _deal_to_response(deal)
 
 

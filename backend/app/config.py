@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     gmail_app_password: str = ""
     # Demo mode: send via local SMTP (no Gmail) — use scripts/run-demo-smtp.ps1
     email_demo_mode: bool = False
+    # Cloud demo: log + accept when no SMTP credentials (Settings → Test email)
+    email_simulate_mode: bool = False
     smtp_host: str = "smtp.gmail.com"
     smtp_port: int = 587
     smtp_use_tls: bool = True

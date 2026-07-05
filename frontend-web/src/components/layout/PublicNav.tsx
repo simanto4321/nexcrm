@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { sectionHref } from '../../lib/paths'
 
 export function PublicNav() {
   return (
@@ -9,10 +10,10 @@ export function PublicNav() {
           <span className="text-xl font-bold text-white">NexCRM</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-          <a href="/#features" className="hover:text-white transition-colors">Features</a>
-          <a href="/#ai" className="hover:text-white transition-colors">AI Assistant</a>
-          <a href="/#integrations" className="hover:text-white transition-colors">Integrations</a>
-          <Link to="/platform-admin" className="hover:text-white transition-colors">Platform</Link>
+          <a href={sectionHref('features')} className="hover:text-white transition-colors">Features</a>
+          <a href={sectionHref('ai')} className="hover:text-white transition-colors">AI Assistant</a>
+          <a href={sectionHref('integrations')} className="hover:text-white transition-colors">Integrations</a>
+          <a href={sectionHref('platform')} className="hover:text-white transition-colors">Platform</a>
         </nav>
         <div className="flex items-center gap-3">
           <Link to="/login" className="text-sm font-semibold text-slate-300 hover:text-white hidden sm:block">Sign In</Link>
@@ -44,8 +45,8 @@ export function PublicFooter() {
         <div>
           <h4 className="text-white font-semibold mb-3 text-sm">Integrations</h4>
           <ul className="space-y-2 text-sm">
-            <li><a href="/#integrations" className="hover:text-white">Telegram</a></li>
-            <li><a href="/#integrations" className="hover:text-white">Email</a></li>
+            <li><a href={sectionHref('integrations')} className="hover:text-white">Telegram</a></li>
+            <li><a href={sectionHref('integrations')} className="hover:text-white">Email</a></li>
           </ul>
         </div>
         <div>

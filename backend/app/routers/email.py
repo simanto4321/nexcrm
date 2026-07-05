@@ -71,6 +71,6 @@ def send_test_email(
 def _smtp_ok() -> bool:
     from app.config import settings
 
-    if settings.email_demo_mode:
+    if settings.email_demo_mode or settings.email_simulate_mode:
         return True
     return bool(settings.gmail_address.strip() and settings.gmail_app_password.strip())

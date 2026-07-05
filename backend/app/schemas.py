@@ -189,6 +189,13 @@ class TelegramStatusResponse(BaseModel):
     chat_id: str | None = None
     invite_link: str | None = None
     connected_at: datetime | None = None
+    bot_configured: bool = False
+    bot_username: str | None = None
+
+
+class TelegramTestResponse(BaseModel):
+    sent: bool
+    message: str
 
 
 class TelegramWebhookResponse(BaseModel):

@@ -10,6 +10,26 @@ const features = [
   { title: 'Pipeline that scales', desc: 'Drag-and-drop Kanban from New to Won/Lost with automatic notifications.', tag: 'Deals' },
 ]
 
+const integrations = [
+  {
+    name: 'Telegram',
+    icon: '✈️',
+    desc: 'Link a team group chat. The bot replies to messages and sends alerts when deals are won/lost or contacts are added.',
+    demo: 'Globex chat ID: -100999888777 · Demo group link in Settings after login.',
+  },
+  {
+    name: 'Email',
+    icon: '✉️',
+    desc: 'Team inbox receives notifications for new contacts, deal outcomes, and task assignments. Test from Settings → Email.',
+    demo: 'Globex team email: team@globex.com · Acme: team@acme.com',
+  },
+]
+
+const platformTenants = [
+  { name: 'Globex Industries', code: 'globex', users: '2 users · 3 contacts · 3 deals' },
+  { name: 'Acme Corp', code: 'acme', users: '2 users · 3 contacts · 3 deals' },
+]
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen deep-bg text-white">
@@ -41,7 +61,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="features" className="py-20 px-4">
+      <section id="features" className="py-20 px-4 scroll-mt-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold text-white">Everything your business needs</h2>
@@ -59,7 +79,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="ai" className="py-20 px-4 landing-section-deep">
+      <section id="ai" className="py-20 px-4 landing-section-deep scroll-mt-20">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold">AI is here to assist.</h2>
@@ -71,7 +91,6 @@ export default function LandingPage() {
               <li>→ Sign in to start asking about contacts, deals & tasks</li>
             </ul>
           </div>
-          {/* Mock browser showing floating bubble position */}
           <div className="relative rounded-xl border border-white/10 bg-[#0a0e1a] overflow-hidden shadow-2xl aspect-[4/3] max-h-[320px]">
             <div className="h-8 bg-[#151b2e] border-b border-white/10 flex items-center px-3 gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
@@ -87,7 +106,6 @@ export default function LandingPage() {
                 <div className="h-16 bg-white/5 rounded" />
               </div>
             </div>
-            {/* Preview bubble in mock */}
             <div className="absolute bottom-4 right-4 flex flex-col items-end gap-2 pointer-events-none">
               <div className="w-48 h-28 bg-white rounded-lg shadow-xl border border-[#e4e7ec] p-2 hidden sm:block">
                 <div className="h-4 bg-[#e42527] rounded-t-sm -mx-2 -mt-2 mb-2 px-2 flex items-center">
@@ -107,12 +125,48 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="integrations" className="py-20 px-4 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#e42527]/20 via-[#4c1d95]/30 to-[#0e7490]/20" />
-        <div className="relative max-w-xl mx-auto">
-          <h2 className="text-3xl font-bold">Connect Telegram & Email</h2>
-          <p className="mt-4 text-slate-400">Configure in Settings — stored in your tenant database.</p>
-          <Link to="/signup" className="btn-zoho mt-8 inline-flex">GET STARTED</Link>
+      <section id="integrations" className="py-20 px-4 scroll-mt-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold">Connect Telegram & Email</h2>
+            <p className="mt-4 text-slate-400">Configure in Settings — stored per tenant in your database.</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 mb-10">
+            {integrations.map((item) => (
+              <div key={item.name} className="rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
+                <div className="text-3xl mb-4">{item.icon}</div>
+                <h3 className="text-xl font-bold text-white mb-2">{item.name}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed mb-4">{item.desc}</p>
+                <p className="text-xs text-slate-500 bg-black/20 rounded-lg px-3 py-2 font-mono">{item.demo}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center">
+            <p className="text-sm text-slate-500 mb-6">Login as tenant admin → Settings → test Email & Telegram</p>
+            <Link to="/signup" className="btn-zoho inline-flex px-8 py-3">GET STARTED</Link>
+          </div>
+        </div>
+      </section>
+
+      <section id="platform" className="py-20 px-4 landing-section-deep scroll-mt-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold">Multi-tenant platform</h2>
+            <p className="mt-4 text-slate-400">Each company gets an isolated workspace. Super-admins manage all tenants.</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6 mb-10">
+            {platformTenants.map((t) => (
+              <div key={t.code} className="zoho-card p-6 text-[#313949]">
+                <h3 className="font-bold text-lg">{t.name}</h3>
+                <p className="text-xs font-mono text-[#e42527] mt-1">company_code: {t.code}</p>
+                <p className="text-sm text-[#616e88] mt-2">{t.users}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center space-y-3">
+            <p className="text-sm text-slate-500">Platform admin: admin@nexcrm.com / admin123</p>
+            <Link to="/platform-admin" className="btn-zoho-outline inline-flex px-6 py-2">Open Platform Console →</Link>
+          </div>
         </div>
       </section>
 

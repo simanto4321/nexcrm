@@ -71,6 +71,8 @@ export interface TelegramStatus {
   connected: boolean
   chat_id: string | null
   invite_link: string | null
+  bot_configured?: boolean
+  bot_username?: string | null
 }
 
 export interface ChatMessage {

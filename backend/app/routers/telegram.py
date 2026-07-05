@@ -9,10 +9,10 @@ from app.config import settings
 from app.database import get_db
 from app.dependencies import TenantUserContext, require_tenant_admin
 from app.models import ChatChannel, TelegramGroup, Tenant
-from app.schemas import TelegramRegisterRequest, TelegramStatusResponse, TelegramWebhookResponse
+from app.schemas import TelegramRegisterRequest, TelegramStatusResponse, TelegramTestResponse, TelegramWebhookResponse
 from app.services.chat_storage import get_or_create_channel_session, load_session_history, save_chat_exchange
 from app.services.chatbot import get_chat_reply
-from app.services.telegram_client import send_telegram_message
+from app.services.telegram_client import bot_configured, get_bot_info, send_telegram_message, send_tenant_telegram
 
 logger = logging.getLogger(__name__)
 
@@ -34,13 +34,24 @@ def telegram_status(
 ):
     """Return whether this tenant has a Telegram group linked."""
     group = db.query(TelegramGroup).filter(TelegramGroup.tenant_id == ctx.tenant_id).first()
+    bot_info = get_bot_info() if bot_configured() else None
+    bot_username = bot_info.get("username") if bot_info else None
     if not group:
-        return TelegramStatusResponse(connected=False, chat_id=None, invite_link=None, connected_at=None)
+        return TelegramStatusResponse(
+            connected=False,
+            chat_id=None,
+            invite_link=None,
+            connected_at=None,
+            bot_configured=bot_configured(),
+            bot_username=bot_username,
+        )
     return TelegramStatusResponse(
         connected=True,
         chat_id=group.chat_id,
         invite_link=group.invite_link,
         connected_at=group.connected_at,
+        bot_configured=bot_configured(),
+        bot_username=bot_username,
     )
 
 
@@ -67,11 +78,38 @@ def register_telegram_chat(
         db.add(group)
     db.commit()
     db.refresh(group)
+    bot_info = get_bot_info() if bot_configured() else None
     return TelegramStatusResponse(
         connected=True,
         chat_id=group.chat_id,
         invite_link=group.invite_link,
         connected_at=group.connected_at,
+        bot_configured=bot_configured(),
+        bot_username=bot_info.get("username") if bot_info else None,
+    )
+
+
+@router.post("/test", response_model=TelegramTestResponse)
+def test_telegram(
+    ctx: TenantUserContext = Depends(require_tenant_admin),
+    db: Session = Depends(get_db),
+):
+    """Send a test message to the tenant's linked Telegram group."""
+    if not bot_configured():
+        return TelegramTestResponse(
+            sent=False,
+            message="TELEGRAM_BOT_TOKEN is not set on the server. Add it in Vercel/Render env vars.",
+        )
+    group = db.query(TelegramGroup).filter(TelegramGroup.tenant_id == ctx.tenant_id).first()
+    if not group or not group.chat_id:
+        return TelegramTestResponse(sent=False, message="No Telegram group linked. Save a chat ID first.")
+    text = f"NexCRM test message for {ctx.tenant.name} — Telegram integration is working."
+    sent = send_tenant_telegram(db, ctx.tenant_id, text)
+    if sent:
+        return TelegramTestResponse(sent=True, message="Test message sent to your Telegram group.")
+    return TelegramTestResponse(
+        sent=False,
+        message="Failed to send. Check bot token and that the bot is a member of the group.",
     )
 
 

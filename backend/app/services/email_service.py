@@ -13,13 +13,17 @@ logger = logging.getLogger(__name__)
 
 
 def _smtp_configured() -> bool:
-    if settings.email_demo_mode:
+    if settings.email_demo_mode or settings.email_simulate_mode:
         return True
     return bool(settings.gmail_address.strip() and settings.gmail_app_password.strip())
 
 
 def send_email(*, to: str, subject: str, body: str) -> bool:
     """Send a plain-text email. Returns True if sent."""
+    if settings.email_simulate_mode:
+        logger.info("[EMAIL SIMULATE] to=%s subject=%s body=%s", to, subject, body[:200])
+        return True
+
     if not _smtp_configured():
         logger.warning("GMAIL_ADDRESS / GMAIL_APP_PASSWORD not set — email skipped")
         return False

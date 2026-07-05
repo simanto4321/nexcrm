@@ -7,7 +7,7 @@ from app.database import get_db
 from app.dependencies import TenantUserContext, assert_resource_tenant, get_current_tenant_user
 from app.models import Contact, User, UserRole
 from app.schemas import ContactCreate, ContactResponse, ContactUpdate, MessageResponse
-from app.services.email_service import notify_new_contact
+from app.services.notifications import on_new_contact
 from app.tenant_filters import contacts_query
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
@@ -67,7 +67,7 @@ def create_contact(
     db.add(contact)
     db.commit()
     db.refresh(contact)
-    notify_new_contact(db, ctx.tenant, contact, ctx.user.name)
+    on_new_contact(db, ctx.tenant, contact, ctx.user.name)
     return contact
 
 
