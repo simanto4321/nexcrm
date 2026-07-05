@@ -2,7 +2,7 @@
 # Deploy: https://dashboard.render.com/select-repo?type=blueprint
 services:
   - type: web
-    name: nexcrm-api
+    name: simanto-nexcrm-api
     runtime: python
     region: singapore
     plan: free

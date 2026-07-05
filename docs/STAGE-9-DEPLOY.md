@@ -5,7 +5,7 @@ NexCRM is deployed as two services:
 | Service | Host | URL pattern |
 |---------|------|-------------|
 | **Web** | GitHub Pages (auto on push to `main`) | **Live:** [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) |
-| **API** | Render (free tier) | `https://nexcrm-api.onrender.com` |
+| **API** | Render (free tier) | `https://simanto-nexcrm-api.onrender.com` |
 
 Alternative web host: **Vercel** — run `npx vercel --prod` from `frontend-web/` after `npx vercel login`.
 
@@ -26,7 +26,7 @@ gh repo create nexcrm --public --source=. --remote=origin --push
 ## 2. Deploy API on Render
 
 1. Open [Render Blueprint deploy](https://dashboard.render.com/select-repo?type=blueprint) and connect the `nexcrm` repo.
-2. Set these **environment variables** on the `nexcrm-api` service:
+2. Set these **environment variables** on the `simanto-nexcrm-api` service:
 
 | Variable | Value |
 |----------|--------|
@@ -34,9 +34,9 @@ gh repo create nexcrm --public --source=. --remote=origin --push
 | `JWT_SECRET` | Same as local `backend/.env` |
 | `CORS_ORIGINS` | `https://simanto4321.github.io,https://YOUR-VERCEL-URL.vercel.app` |
 
-3. Wait for deploy; note the API URL (e.g. `https://nexcrm-api.onrender.com`).
+3. Wait for deploy; note the API URL (e.g. `https://simanto-nexcrm-api.onrender.com`).
 
-4. Test: `https://nexcrm-api.onrender.com/health` → `{"status":"ok"}`
+4. Test: `https://simanto-nexcrm-api.onrender.com/health` → `{"status":"ok"}`
 
 > **Note:** Ollama runs locally only. On Render the chatbot uses **FAQ fallback** automatically.
 
@@ -48,7 +48,7 @@ In GitHub repo **Settings → Secrets and variables → Actions → Variables**,
 
 | Name | Value |
 |------|--------|
-| `VITE_API_URL` | `https://nexcrm-api.onrender.com` (no trailing slash) |
+| `VITE_API_URL` | `https://simanto-nexcrm-api.onrender.com` (no trailing slash) |
 
 Re-run the **Deploy Web** workflow (Actions tab → Deploy Web → Run workflow).
 

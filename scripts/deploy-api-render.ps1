@@ -17,7 +17,7 @@ param(
 $ErrorActionPreference = "Stop"
 $repoUrl = "https://github.com/simanto4321/nexcrm"
 $deployUrl = "https://dashboard.render.com/select-repo?type=blueprint"
-$apiUrl = "https://nexcrm-api.onrender.com"
+$apiUrl = "https://simanto-nexcrm-api.onrender.com"
 $webUrl = "https://simanto4321.github.io/nexcrm"
 
 Write-Host "`n=== NexCRM API — Render Deploy ===" -ForegroundColor Cyan
