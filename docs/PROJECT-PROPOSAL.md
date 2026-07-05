@@ -87,7 +87,8 @@ The Android app shares authentication, database, and business rules with the com
 |-----------|--------|
 | Backend + Supabase | ✓ Complete |
 | Web frontend + landing page | ✓ Complete |
-| Live web hosting | ✓ Complete |
+| Live web hosting | ✓ [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) |
+| Live API | ✓ [nexcrm-api-phi.vercel.app](https://nexcrm-api-phi.vercel.app) |
 | AI chat, Telegram, email | ✓ Complete |
 | **Android mobile app** | **Current focus** |
 

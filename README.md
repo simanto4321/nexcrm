@@ -1,41 +1,47 @@
 # NexCRM
 
-Multi-tenant CRM capstone project — all project files live on **D:\NexCRM**.
+Multi-tenant CRM capstone — **live demo** + local development.
+
+**Repository:** [github.com/simanto4321/nexcrm](https://github.com/simanto4321/nexcrm)
+
+## Live demo
+
+| | URL |
+|---|-----|
+| **Web app** | [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) |
+| **API** | [nexcrm-api-phi.vercel.app](https://nexcrm-api-phi.vercel.app) |
+| **API docs** | [nexcrm-api-phi.vercel.app/docs](https://nexcrm-api-phi.vercel.app/docs) |
+
+### Demo logins
+
+| Role | Email | Password | Company code |
+|------|-------|----------|--------------|
+| Tenant admin (Globex) | `sara@globex.com` | `secret123` | `globex` |
+| Sales rep (Globex) | `tom@globex.com` | `secret123` | `globex` |
+| Tenant admin (Acme) | `jane@acme.com` | `secret123` | `acme` |
+| Platform super-admin | `admin@nexcrm.com` | `admin123` | — (use [Platform Console](https://simanto4321.github.io/nexcrm/platform-admin)) |
+
+### Integrations (per tenant, in Settings)
+
+| Tenant | Team email | Telegram chat ID |
+|--------|------------|------------------|
+| Globex | `team@globex.com` | `-100999888777` |
+| Acme | `team@acme.com` | `-100777666555` |
+
+Email test works on live API. For Telegram outbound messages, set `TELEGRAM_BOT_TOKEN` on the Vercel API project.
+
+---
 
 ## Folder layout
 
 ```
 D:\NexCRM\
 ├── backend/          FastAPI + SQLAlchemy + Alembic
-├── frontend-web/     React (Vite) — Stage 7
-├── mobile-app/       Expo React Native — Stage 8
-└── docs/             Architecture notes
+├── frontend-web/     React (Vite) — web app
+├── mobile-app/       Expo React Native — Stage 8 (planned)
+├── docs/             Architecture, stages, proposal
+└── scripts/          Run, seed, test scripts
 ```
-
-## D-drive only policy
-
-All project files, virtualenv, pip/npm caches, and temp files stay on **D:\NexCRM**:
-
-| Path | Purpose |
-|------|---------|
-| `D:\NexCRM\` | Source code |
-| `D:\NexCRM\.venv\` | Python virtual environment |
-| `D:\NexCRM\.cache\pip\` | pip download cache |
-| `D:\NexCRM\.cache\npm\` | npm cache (Stages 7–8) |
-| `D:\NexCRM\.cache\temp\` | TEMP/TMP during installs |
-
-**Before every terminal session**, run:
-
-```powershell
-$env:PIP_CACHE_DIR = "D:\NexCRM\.cache\pip"
-$env:NPM_CONFIG_CACHE = "D:\NexCRM\.cache\npm"
-$env:TEMP = "D:\NexCRM\.cache\temp"
-$env:TMP = "D:\NexCRM\.cache\temp"
-```
-
-Or use `D:\NexCRM\scripts\setup-backend.bat` which sets these automatically.
-
-> **Note:** Your system Python is 3.14 (on C:). The venv at `D:\NexCRM\.venv` uses that interpreter but all *packages* install on D. For faculty compliance with "Python 3.11+", you can optionally install Python 3.12 to `D:\Python312` and recreate the venv with `D:\Python312\python.exe -m venv D:\NexCRM\.venv`.
 
 ## Stages
 
@@ -49,6 +55,30 @@ Or use `D:\NexCRM\scripts\setup-backend.bat` which sets these automatically.
 | 6 — Email integration | ✅ Complete |
 | 7 — React web frontend | ✅ Complete |
 | 8 — Expo mobile app | pending |
-| 9 — Live web hosting | ✅ [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) |
+| 9 — Live hosting | ✅ [Web](https://simanto4321.github.io/nexcrm/) + [API](https://nexcrm-api-phi.vercel.app) |
 
-See `docs/STAGE-9-DEPLOY.md` for API deployment on Render.
+See `docs/STAGE-9-DEPLOY.md` for deployment details.
+
+---
+
+## Local development
+
+```powershell
+D:\NexCRM\scripts\run-backend.ps1      # API :8000
+D:\NexCRM\scripts\run-frontend.ps1     # Web :5173
+D:\NexCRM\scripts\run-demo-smtp.ps1    # optional email demo
+```
+
+Seed database (Supabase):
+
+```powershell
+cd D:\NexCRM\backend
+D:\NexCRM\.venv\Scripts\python.exe scripts\seed_data.py
+D:\NexCRM\.venv\Scripts\python.exe scripts\seed_integrations.py
+```
+
+---
+
+## D-drive policy
+
+Project files, venv, and caches stay on **D:\NexCRM**. See `scripts/setup-backend.bat` for env vars.

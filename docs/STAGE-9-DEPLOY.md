@@ -2,85 +2,73 @@
 
 NexCRM is deployed as two services:
 
-| Service | Host | URL pattern |
-|---------|------|-------------|
-| **Web** | GitHub Pages (auto on push to `main`) | **Live:** [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) |
-| **API** | Vercel (serverless) | **Live:** [nexcrm-api-phi.vercel.app](https://nexcrm-api-phi.vercel.app) |
+| Service | Host | Live URL |
+|---------|------|----------|
+| **Web** | GitHub Pages (auto on push to `main`) | [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) |
+| **API** | Vercel (serverless FastAPI) | [nexcrm-api-phi.vercel.app](https://nexcrm-api-phi.vercel.app) |
 
-Alternative web host: **Vercel** — run `npx vercel --prod` from `frontend-web/` after `npx vercel login`.
-
----
-
-## 1. Push code to GitHub
-
-```powershell
-cd D:\NexCRM
-git init
-git add .
-git commit -m "Add NexCRM web deployment configs"
-gh repo create nexcrm --public --source=. --remote=origin --push
-```
+GitHub repo: [github.com/simanto4321/nexcrm](https://github.com/simanto4321/nexcrm)
 
 ---
 
-## 2. Deploy API on Render
+## Auto-deploy (GitHub)
 
-1. Open [Render Blueprint deploy](https://dashboard.render.com/select-repo?type=blueprint) and connect the `nexcrm` repo.
-2. Set these **environment variables** on the `simanto-nexcrm-api` service:
+Pushing to `main` triggers the **Deploy Web** workflow (`.github/workflows/deploy-web.yml`).
 
-| Variable | Value |
-|----------|--------|
-| `DATABASE_URL` | Your Supabase pooler URL (`postgresql://...`) |
-| `JWT_SECRET` | Same as local `backend/.env` |
-| `CORS_ORIGINS` | `https://simanto4321.github.io,https://YOUR-VERCEL-URL.vercel.app` |
-
-3. Wait for deploy; note the API URL (e.g. `https://simanto-nexcrm-api.onrender.com`).
-
-4. Test: `https://simanto-nexcrm-api.onrender.com/health` → `{"status":"ok"}`
-
-> **Note:** Ollama runs locally only. On Render the chatbot uses **FAQ fallback** automatically.
-
----
-
-## 3. Connect frontend to live API
-
-In GitHub repo **Settings → Secrets and variables → Actions → Variables**, add:
+Required GitHub Actions variable:
 
 | Name | Value |
 |------|--------|
-| `VITE_API_URL` | `https://simanto-nexcrm-api.onrender.com` (no trailing slash) |
-
-Re-run the **Deploy Web** workflow (Actions tab → Deploy Web → Run workflow).
+| `VITE_API_URL` | `https://nexcrm-api-phi.vercel.app` |
 
 ---
 
-## 4. Vercel (optional — cleaner URL)
+## API on Vercel
 
 ```powershell
-cd D:\NexCRM\frontend-web
+cd D:\NexCRM\backend
 npx vercel login
-npx vercel --prod
-# Set VITE_API_URL in Vercel project Environment Variables
+npx vercel deploy --prod
 ```
 
-Use `VITE_BASE_PATH=/` on Vercel (default).
+Production env vars on Vercel project `nexcrm-api`:
+
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | Supabase PostgreSQL pooler URL |
+| `JWT_SECRET` | Same as local `backend/.env` |
+| `CORS_ORIGINS` | `https://simanto4321.github.io,http://localhost:5173` |
+| `EMAIL_SIMULATE_MODE` | `true` — demo emails without Gmail SMTP |
+| `TELEGRAM_BOT_TOKEN` | Optional — from [@BotFather](https://t.me/BotFather) |
+
+Health check: `GET /health` → `{"status":"ok","service":"nexcrm-backend"}`
+
+> Ollama runs locally only. On Vercel the chatbot uses **FAQ fallback**.
 
 ---
 
 ## Demo login (live)
 
-- URL: `https://simanto4321.github.io/nexcrm/`
+- **Web:** [simanto4321.github.io/nexcrm/login](https://simanto4321.github.io/nexcrm/login)
 - Email: `sara@globex.com`
 - Password: `secret123`
 - Company: `globex`
 
+After login: **Settings** → test Email & Telegram integrations.
+
 ---
 
-## Local dev (unchanged)
+## Local dev
 
 ```powershell
 D:\NexCRM\scripts\run-backend.ps1
 D:\NexCRM\scripts\run-frontend.ps1
 ```
 
-Local frontend uses `/api` proxy to `localhost:8000` via `frontend-web/.env`.
+Local frontend proxies `/api` → `localhost:8000` via `frontend-web/.env`.
+
+---
+
+## Alternative: Render API
+
+`render.yaml` is included if you prefer Render over Vercel for the API. See `scripts/deploy-api-render.ps1`.
