@@ -49,5 +49,6 @@ Or use `D:\NexCRM\scripts\setup-backend.bat` which sets these automatically.
 | 6 — Email integration | ✅ Complete |
 | 7 — React web frontend | ✅ Complete |
 | 8 — Expo mobile app | pending |
+| 9 — Live web hosting | ✅ [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) |
 
-See `docs/STAGE-1.md` for setup and test commands.
+See `docs/STAGE-9-DEPLOY.md` for API deployment on Render.

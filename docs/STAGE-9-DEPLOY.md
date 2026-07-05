@@ -4,7 +4,7 @@ NexCRM is deployed as two services:
 
 | Service | Host | URL pattern |
 |---------|------|-------------|
-| **Web** | GitHub Pages (auto on push to `main`) | `https://simanto4321.github.io/nexcrm/` |
+| **Web** | GitHub Pages (auto on push to `main`) | **Live:** [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) |
 | **API** | Render (free tier) | `https://nexcrm-api.onrender.com` |
 
 Alternative web host: **Vercel** — run `npx vercel --prod` from `frontend-web/` after `npx vercel login`.
