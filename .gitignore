@@ -1,0 +1,35 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Secrets — never commit
+.env
+backend/.env
+frontend-web/.env
+frontend-web/.env.local
+frontend-web/.env.production
+
+# Caches & local data (D-drive policy)
+.cache/
+.ollama/
+ollama/
+
+# Node
+node_modules/
+frontend-web/dist/
+mobile-app/node_modules/
+mobile-app/.expo/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

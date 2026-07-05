@@ -1,0 +1,187 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: #313949;
+  -webkit-font-smoothing: antialiased;
+  background: #070b14;
+}
+
+.deep-bg {
+  background-color: #070b14;
+  background-image:
+    radial-gradient(ellipse 90% 60% at 10% -5%, rgba(228, 37, 39, 0.18), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 95% 15%, rgba(51, 140, 240, 0.14), transparent 50%),
+    radial-gradient(ellipse 60% 45% at 50% 100%, rgba(88, 28, 135, 0.22), transparent 55%),
+    linear-gradient(165deg, #070b14 0%, #0c1224 35%, #121a32 65%, #0a0e1c 100%);
+  background-attachment: fixed;
+}
+
+.deep-bg-app {
+  background-color: #0a0e1a;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 100% 0%, rgba(99, 102, 241, 0.12), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 0% 100%, rgba(228, 37, 39, 0.08), transparent 45%),
+    linear-gradient(180deg, #0a0e1a 0%, #0f1528 50%, #0c1020 100%);
+}
+
+.btn-zoho {
+  @apply inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200;
+  background: #e42527;
+}
+.btn-zoho:hover { background: #c82124; box-shadow: 0 4px 20px rgba(228, 37, 39, 0.45); }
+.btn-zoho:disabled { @apply opacity-50 cursor-not-allowed; }
+
+.btn-zoho-outline {
+  @apply inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-semibold border-2 transition-all;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+.btn-zoho-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-zoho-secondary {
+  @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium border transition-colors;
+  border-color: #e4e7ec;
+  color: #313949;
+  background: white;
+}
+.btn-zoho-secondary:hover { background: #f9fafb; }
+
+.zoho-input {
+  @apply w-full rounded-md border px-3 py-2.5 text-sm outline-none transition-all bg-white;
+  border-color: #e4e7ec;
+  color: #313949;
+}
+.zoho-input:focus {
+  border-color: #338cf0;
+  box-shadow: 0 0 0 3px rgba(51, 140, 240, 0.15);
+}
+
+.zoho-card {
+  @apply bg-white rounded-lg border;
+  border-color: #e4e7ec;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.zoho-table th {
+  @apply text-left text-xs font-semibold uppercase tracking-wide px-4 py-3 bg-[#fafbfc];
+  color: #616e88;
+  border-bottom: 1px solid #e4e7ec;
+}
+.zoho-table td {
+  @apply px-4 py-3 text-sm border-b border-[#f0f1f4];
+}
+.zoho-table tr:hover td { background: #fafbfc; }
+
+.sidebar-link {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors;
+  color: #94a3b8;
+}
+.sidebar-link:hover { background: rgba(255, 255, 255, 0.06); color: #f1f5f9; }
+.sidebar-link.active {
+  background: rgba(228, 37, 39, 0.15);
+  color: #fca5a5;
+  font-weight: 600;
+  border-left: 3px solid #e42527;
+  padding-left: calc(0.75rem - 3px);
+}
+
+.page-fade { animation: fadeUp 0.35s ease-out; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.landing-hero-bg { position: relative; background: transparent; }
+
+.landing-section-deep {
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.stat-pill {
+  @apply inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold;
+  background: rgba(228, 37, 39, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(228, 37, 39, 0.3);
+}
+
+.app-shell { min-height: 100vh; }
+
+.nav-dark {
+  @apply sticky top-0 z-50 backdrop-blur-xl border-b;
+  background: rgba(7, 11, 20, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-dark {
+  background: linear-gradient(180deg, #0a0f1e 0%, #0d1225 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.topbar-dark {
+  background: rgba(10, 14, 26, 0.92);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Floating AI chat bubble */
+@keyframes chat-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.chat-launcher {
+  animation: chat-float 3s ease-in-out infinite;
+  box-shadow:
+    0 8px 32px rgba(228, 37, 39, 0.45),
+    0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.chat-launcher:hover {
+  animation: none;
+  transform: scale(1.08);
+  box-shadow:
+    0 12px 40px rgba(228, 37, 39, 0.55),
+    0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.chat-panel-enter {
+  animation: chatPanelIn 0.25s ease-out;
+}
+
+@keyframes chatPanelIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chat-fab-root {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+@media (max-width: 1023px) {
+  .chat-fab-root {
+    bottom: 4.5rem; /* above mobile bottom nav */
+  }
+}
+
+.chat-fab-root > * {
+  pointer-events: auto;
+}

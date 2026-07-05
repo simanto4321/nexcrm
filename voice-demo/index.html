@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexCRM — Chat Widget Demo</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f1f5f9;
+      --panel: #fff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --user-bubble: #2563eb;
+      --bot-bubble: #f1f5f9;
+      --shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .demo-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+    .demo-page h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .demo-page p { color: var(--muted); line-height: 1.6; }
+
+    /* ---- Floating widget ---- */
+    #nexchat-launcher {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    #nexchat-launcher:hover { transform: scale(1.05); }
+    #nexchat-launcher svg { width: 28px; height: 28px; fill: currentColor; }
+    #nexchat-launcher.open { transform: scale(0.95); }
+
+    #nexchat-panel {
+      position: fixed;
+      bottom: 96px;
+      right: 24px;
+      width: 380px;
+      max-width: calc(100vw - 32px);
+      height: 520px;
+      max-height: calc(100vh - 120px);
+      background: var(--panel);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 9998;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px) scale(0.96);
+      transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+    }
+    #nexchat-panel.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    .nc-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .nc-header-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .nc-header-info { flex: 1; }
+    .nc-header-info h2 { font-size: 0.95rem; font-weight: 600; }
+    .nc-header-info span { font-size: 0.75rem; opacity: 0.85; }
+    .nc-header-actions { display: flex; gap: 4px; }
+    .nc-icon-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nc-icon-btn:hover { background: rgba(255,255,255,0.25); }
+    .nc-icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .nc-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+    /* Login */
+    #nc-login {
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+    #nc-login label { font-size: 0.8rem; color: var(--muted); }
+    #nc-login input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+    #nc-login button {
+      margin-top: 8px;
+      padding: 10px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #nc-login button:hover { background: var(--primary-dark); }
+    #nc-login-status { font-size: 0.8rem; color: #dc2626; min-height: 1.2em; }
+
+    /* Messages */
+    #nc-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #fafbfc;
+    }
+    .nc-msg { display: flex; flex-direction: column; max-width: 85%; }
+    .nc-msg.user { align-self: flex-end; align-items: flex-end; }
+    .nc-msg.bot { align-self: flex-start; align-items: flex-start; }
+    .nc-msg.sys { align-self: center; max-width: 100%; }
+    .nc-bubble {
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 0.875rem;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+    .nc-msg.user .nc-bubble {
+      background: var(--user-bubble);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .nc-msg.bot .nc-bubble {
+      background: var(--bot-bubble);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+    .nc-msg.sys .nc-bubble {
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 4px 8px;
+    }
+    .nc-msg img.nc-photo {
+      max-width: 200px;
+      border-radius: 12px;
+      margin-top: 6px;
+      border: 1px solid var(--border);
+    }
+    .nc-meta { font-size: 0.65rem; color: var(--muted); margin-top: 3px; }
+
+    .nc-typing {
+      display: flex; gap: 4px; padding: 12px 14px;
+      background: var(--bot-bubble); border-radius: 16px;
+      border: 1px solid var(--border); width: fit-content;
+    }
+    .nc-typing span {
+      width: 6px; height: 6px; background: var(--muted);
+      border-radius: 50%; animation: bounce 1.2s infinite;
+    }
+    .nc-typing span:nth-child(2) { animation-delay: 0.15s; }
+    .nc-typing span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-4px); }
+    }
+
+    /* Input bar */
+    .nc-input-bar {
+      border-top: 1px solid var(--border);
+      padding: 10px 12px;
+      background: var(--panel);
+      flex-shrink: 0;
+    }
+    .nc-preview {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .nc-preview.show { display: flex; }
+    .nc-preview img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
+    .nc-preview span { flex: 1; font-size: 0.75rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nc-preview button {
+      background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; line-height: 1;
+    }
+    .nc-input-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .nc-tool-btn {
+      width: 36px; height: 36px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nc-tool-btn:hover { background: #f1f5f9; color: var(--primary); }
+    .nc-tool-btn.active { background: #fee2e2; color: #dc2626; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+    .nc-tool-btn svg { width: 20px; height: 20px; fill: currentColor; }
+    #nc-text {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 0.875rem;
+      resize: none;
+      max-height: 100px;
+      line-height: 1.4;
+      font-family: inherit;
+    }
+    #nc-text:focus { outline: none; border-color: var(--primary); }
+    #nc-send {
+      width: 36px; height: 36px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    #nc-send:disabled { opacity: 0.4; cursor: not-allowed; }
+    #nc-send svg { width: 18px; height: 18px; fill: currentColor; }
+    #nc-file-input { display: none; }
+
+    .nc-hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="demo-page">
+    <h1>NexCRM Dashboard (demo)</h1>
+    <p>The support chatbot appears as a floating bubble in the bottom-right corner — click it to open text, photo, and voice options.</p>
+  </div>
+
+  <!-- Launcher bubble -->
+  <button id="nexchat-launcher" aria-label="Open chat">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+  </button>
+
+  <!-- Chat panel -->
+  <div id="nexchat-panel" role="dialog" aria-label="Support chat">
+    <div class="nc-header">
+      <div class="nc-header-avatar">🤖</div>
+      <div class="nc-header-info">
+        <h2>NexCRM Support</h2>
+        <span id="nc-status-dot">Ask about contacts, deals & tasks</span>
+      </div>
+      <div class="nc-header-actions">
+        <button class="nc-icon-btn" id="nc-tts-toggle" title="Toggle voice replies">
+          <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        </button>
+        <button class="nc-icon-btn" id="nc-close" title="Close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="nc-body">
+      <div id="nc-login">
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:4px;">Sign in to start chatting</p>
+        <label>Email<input id="nc-email" type="email" value="sara@globex.com" /></label>
+        <label>Password<input id="nc-password" type="password" value="secret123" /></label>
+        <label>Company code<input id="nc-company" value="globex" /></label>
+        <button id="nc-login-btn">Continue</button>
+        <p id="nc-login-status"></p>
+      </div>
+
+      <div id="nc-chat" class="nc-hidden" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div id="nc-messages"></div>
+        <div class="nc-input-bar">
+          <div class="nc-preview" id="nc-preview">
+            <img id="nc-preview-img" alt="Preview" />
+            <span id="nc-preview-name"></span>
+            <button id="nc-preview-clear" title="Remove">&times;</button>
+          </div>
+          <div class="nc-input-row">
+            <button class="nc-tool-btn" id="nc-attach" title="Attach photo">
+              <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            </button>
+            <input type="file" id="nc-file-input" accept="image/jpeg,image/png,image/gif,image/webp" />
+            <button class="nc-tool-btn" id="nc-mic" title="Voice message">
+              <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </button>
+            <textarea id="nc-text" rows="1" placeholder="Type a message…"></textarea>
+            <button id="nc-send" title="Send">
+              <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = window.location.origin;
+    let token = "", sessionId = null, history = [];
+    let recognition = null, listening = false, ttsEnabled = true;
+    let pendingPhoto = null; // { file, dataUrl, name }
+
+    const launcher = document.getElementById("nexchat-launcher");
+    const panel = document.getElementById("nexchat-panel");
+    const loginEl = document.getElementById("nc-login");
+    const chatEl = document.getElementById("nc-chat");
+    const messagesEl = document.getElementById("nc-messages");
+    const textEl = document.getElementById("nc-text");
+    const micBtn = document.getElementById("nc-mic");
+    const sendBtn = document.getElementById("nc-send");
+    const previewEl = document.getElementById("nc-preview");
+
+    function togglePanel(open) {
+      const isOpen = open ?? !panel.classList.contains("open");
+      panel.classList.toggle("open", isOpen);
+      launcher.classList.toggle("open", isOpen);
+      if (isOpen) textEl.focus();
+    }
+
+    launcher.onclick = () => togglePanel(true);
+    document.getElementById("nc-close").onclick = () => togglePanel(false);
+
+    document.getElementById("nc-tts-toggle").onclick = (e) => {
+      ttsEnabled = !ttsEnabled;
+      e.currentTarget.style.opacity = ttsEnabled ? "1" : "0.4";
+      if (!ttsEnabled) window.speechSynthesis.cancel();
+    };
+
+    function scrollMessages() {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function addMessage(role, text, opts = {}) {
+      const wrap = document.createElement("div");
+      wrap.className = "nc-msg " + role;
+      const bubble = document.createElement("div");
+      bubble.className = "nc-bubble";
+      bubble.textContent = text;
+      wrap.appendChild(bubble);
+      if (opts.imageUrl) {
+        const img = document.createElement("img");
+        img.className = "nc-photo";
+        img.src = opts.imageUrl;
+        img.alt = "Attached photo";
+        wrap.appendChild(img);
+      }
+      if (opts.meta) {
+        const meta = document.createElement("div");
+        meta.className = "nc-meta";
+        meta.textContent = opts.meta;
+        wrap.appendChild(meta);
+      }
+      messagesEl.appendChild(wrap);
+      scrollMessages();
+      return wrap;
+    }
+
+    function showTyping() {
+      const el = document.createElement("div");
+      el.className = "nc-msg bot";
+      el.id = "nc-typing-indicator";
+      el.innerHTML = '<div class="nc-typing"><span></span><span></span><span></span></div>';
+      messagesEl.appendChild(el);
+      scrollMessages();
+    }
+
+    function hideTyping() {
+      document.getElementById("nc-typing-indicator")?.remove();
+    }
+
+    function speak(text) {
+      if (!ttsEnabled) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(u);
+    }
+
+    async function sendMessage(text, photoOpts = null) {
+      const trimmed = (text || "").trim();
+      const hasPhoto = !!photoOpts;
+      if (!trimmed && !hasPhoto) return;
+
+      let displayText = trimmed || "📷 Photo";
+      let apiText = trimmed;
+      if (hasPhoto) {
+        if (!apiText) apiText = `[User shared a photo: ${photoOpts.name}] Please acknowledge and ask how you can help.`;
+        else apiText = `[Photo: ${photoOpts.name}] ${trimmed}`;
+      }
+
+      addMessage("user", displayText, { imageUrl: photoOpts?.dataUrl });
+      history.push({ role: "user", text: apiText });
+
+      sendBtn.disabled = true;
+      showTyping();
+
+      const body = { message: apiText, conversation_history: history.slice(0, -1) };
+      if (sessionId) body.session_id = sessionId;
+
+      try {
+        const res = await fetch(API + "/chatbot/message", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+          body: JSON.stringify(body),
+        });
+        hideTyping();
+        if (!res.ok) {
+          addMessage("sys", "Could not send message (" + res.status + ")");
+          history.pop();
+          return;
+        }
+        const data = await res.json();
+        sessionId = data.session_id;
+        history.push({ role: "assistant", text: data.reply });
+        addMessage("bot", data.reply, { meta: data.source === "ollama" ? "AI" : "FAQ" });
+        speak(data.reply);
+      } catch (err) {
+        hideTyping();
+        addMessage("sys", "Network error");
+        history.pop();
+      } finally {
+        sendBtn.disabled = false;
+        clearPhotoPreview();
+      }
+    }
+
+    function clearPhotoPreview() {
+      pendingPhoto = null;
+      previewEl.classList.remove("show");
+      document.getElementById("nc-file-input").value = "";
+    }
+
+    document.getElementById("nc-preview-clear").onclick = clearPhotoPreview;
+
+    document.getElementById("nc-attach").onclick = () => document.getElementById("nc-file-input").click();
+
+    document.getElementById("nc-file-input").onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file || !file.type.startsWith("image/")) return;
+      if (file.size > 5 * 1024 * 1024) {
+        addMessage("sys", "Image must be under 5 MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        pendingPhoto = { file, dataUrl: reader.result, name: file.name };
+        document.getElementById("nc-preview-img").src = reader.result;
+        document.getElementById("nc-preview-name").textContent = file.name;
+        previewEl.classList.add("show");
+        textEl.focus();
+      };
+      reader.readAsDataURL(file);
+    };
+
+    function doSend() {
+      const text = textEl.value.trim();
+      const photo = pendingPhoto;
+      textEl.value = "";
+      textEl.style.height = "auto";
+      sendMessage(text, photo);
+    }
+
+    sendBtn.onclick = doSend;
+    textEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); doSend(); }
+    });
+    textEl.addEventListener("input", () => {
+      textEl.style.height = "auto";
+      textEl.style.height = Math.min(textEl.scrollHeight, 100) + "px";
+    });
+
+    document.getElementById("nc-login-btn").onclick = async () => {
+      const status = document.getElementById("nc-login-status");
+      status.textContent = "Signing in…";
+      try {
+        const res = await fetch(API + "/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: document.getElementById("nc-email").value,
+            password: document.getElementById("nc-password").value,
+            company_code: document.getElementById("nc-company").value,
+          }),
+        });
+        if (!res.ok) { status.textContent = "Login failed (" + res.status + ")"; return; }
+        const data = await res.json();
+        token = data.access_token;
+        loginEl.classList.add("nc-hidden");
+        chatEl.classList.remove("nc-hidden");
+        document.getElementById("nc-status-dot").textContent = "Online · " + data.tenant_name;
+        addMessage("bot", "Hi! I can help with contacts, deals, and tasks. Type, attach a photo, or use the mic.");
+      } catch {
+        status.textContent = "Network error";
+      }
+    };
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        textEl.value = transcript;
+        doSend();
+      };
+      recognition.onend = () => {
+        listening = false;
+        micBtn.classList.remove("active");
+      };
+      recognition.onerror = () => {
+        listening = false;
+        micBtn.classList.remove("active");
+      };
+    } else {
+      micBtn.title = "Voice not supported in this browser";
+      micBtn.style.opacity = "0.4";
+    }
+
+    micBtn.onclick = () => {
+      if (!recognition) return;
+      if (listening) { recognition.stop(); return; }
+      listening = true;
+      micBtn.classList.add("active");
+      recognition.start();
+    };
+  </script>
+</body>
+</html>
