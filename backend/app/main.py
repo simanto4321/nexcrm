@@ -34,6 +34,16 @@ app.include_router(email.router)
 app.include_router(platform.router)
 
 
+@app.get("/")
+def root():
+    return {
+        "service": "NexCRM API",
+        "status": "ok",
+        "docs": "/docs",
+        "health": "/health",
+    }
+
+
 @app.get("/health")
 def health_check():
     return {"status": "ok", "service": "nexcrm-backend"}
