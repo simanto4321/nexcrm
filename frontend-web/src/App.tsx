@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import ChatBubble from './components/ChatBubble'
 import { AuthProvider } from './context/AuthContext'
+import { SearchProvider } from './context/SearchContext'
 import Layout from './components/Layout'
 import { AdminRoute, ProtectedRoute } from './components/ProtectedRoute'
 import ContactsPage from './pages/ContactsPage'
@@ -16,6 +17,7 @@ import TasksPage from './pages/TasksPage'
 export default function App() {
   return (
     <AuthProvider>
+      <SearchProvider>
       <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}>
         <ChatBubble />
         <Routes>
@@ -33,6 +35,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      </SearchProvider>
     </AuthProvider>
   )
 }

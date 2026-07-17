@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useSearch } from '../context/SearchContext'
 
 const navItems = [
   { to: '/dashboard', label: 'Home', icon: '🏠' },
@@ -11,6 +12,7 @@ const navItems = [
 
 export default function Layout() {
   const { tenantName, user, logout, isAdmin, role } = useAuth()
+  const { query, setQuery } = useSearch()
 
   return (
     <div className="app-shell flex min-h-screen deep-bg-app">
@@ -56,7 +58,13 @@ export default function Layout() {
             <span className="font-bold text-sm text-white">{tenantName}</span>
           </div>
           <div className="hidden sm:flex flex-1 max-w-md">
-            <input type="search" placeholder="Search CRM..." className="zoho-input py-2 text-sm w-full max-w-xs" readOnly />
+            <input
+              type="search"
+              placeholder="Search contacts, deals..."
+              className="zoho-input py-2 text-sm w-full max-w-xs"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
           <span className="hidden md:inline text-xs text-slate-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
             {tenantName}

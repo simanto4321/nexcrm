@@ -1,74 +1,57 @@
-# Stage 9 — Live hosting
+# Stage 9 — Live hosting (Vercel)
 
-NexCRM is deployed as two services:
+| Service | Vercel project | Live URL |
+|---------|----------------|----------|
+| **Web** | `nexcrm-web` | [nexcrm-web.vercel.app](https://nexcrm-web.vercel.app) |
+| **API** | `nexcrm-api` | [nexcrm-api-phi.vercel.app](https://nexcrm-api-phi.vercel.app) |
 
-| Service | Host | Live URL |
-|---------|------|----------|
-| **Web** | GitHub Pages (auto on push to `main`) | [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) |
-| **API** | Vercel (serverless FastAPI) | [nexcrm-api-phi.vercel.app](https://nexcrm-api-phi.vercel.app) |
-
-GitHub repo: [github.com/simanto4321/nexcrm](https://github.com/simanto4321/nexcrm)
+GitHub mirror: [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/) (auto-deploy on push)
 
 ---
 
-## Auto-deploy (GitHub)
-
-Pushing to `main` triggers the **Deploy Web** workflow (`.github/workflows/deploy-web.yml`).
-
-Required GitHub Actions variable:
-
-| Name | Value |
-|------|--------|
-| `VITE_API_URL` | `https://nexcrm-api-phi.vercel.app` |
-
----
-
-## API on Vercel
+## One-command deploy
 
 ```powershell
-cd D:\NexCRM\backend
-npx vercel login
-npx vercel deploy --prod
+D:\NexCRM\scripts\deploy-vercel.ps1
 ```
 
-Production env vars on Vercel project `nexcrm-api`:
+---
 
-| Variable | Purpose |
-|----------|---------|
-| `DATABASE_URL` | Supabase PostgreSQL pooler URL |
-| `JWT_SECRET` | Same as local `backend/.env` |
-| `CORS_ORIGINS` | `https://simanto4321.github.io,http://localhost:5173` |
-| `EMAIL_SIMULATE_MODE` | `true` — demo emails without Gmail SMTP |
+## API (`nexcrm-api`) — env vars
+
+| Variable | Value |
+|----------|--------|
+| `DATABASE_URL` | Supabase pooler URL (`postgresql://...`) |
+| `JWT_SECRET` | Long random secret |
+| `CORS_ORIGINS` | `https://nexcrm-web.vercel.app,https://simanto4321.github.io,http://localhost:5173` |
+| `EMAIL_SIMULATE_MODE` | `true` (demo emails without Gmail) |
 | `TELEGRAM_BOT_TOKEN` | Optional — from [@BotFather](https://t.me/BotFather) |
 
-Health check: `GET /health` → `{"status":"ok","service":"nexcrm-backend"}`
-
-> Ollama runs locally only. On Vercel the chatbot uses **FAQ fallback**.
+Webhook URL for Telegram: `https://nexcrm-api-phi.vercel.app/telegram/webhook`
 
 ---
 
-## Demo login (live)
+## Web (`nexcrm-web`) — env vars
 
-- **Web:** [simanto4321.github.io/nexcrm/login](https://simanto4321.github.io/nexcrm/login)
-- Email: `sara@globex.com`
-- Password: `secret123`
-- Company: `globex`
-
-After login: **Settings** → test Email & Telegram integrations.
+| Variable | Value |
+|----------|--------|
+| `VITE_API_URL` | `https://nexcrm-api-phi.vercel.app` |
+| `VITE_BASE_PATH` | `/` |
 
 ---
 
-## Local dev
+## Fix database connection (login 500)
 
-```powershell
-D:\NexCRM\scripts\run-backend.ps1
-D:\NexCRM\scripts\run-frontend.ps1
-```
-
-Local frontend proxies `/api` → `localhost:8000` via `frontend-web/.env`.
+1. Open [Supabase Dashboard](https://supabase.com/dashboard) → your project
+2. If paused, click **Restore**
+3. Settings → Database → copy **Connection string** (pooler, port 6543)
+4. Vercel → `nexcrm-api` → Settings → Environment Variables → update `DATABASE_URL`
+5. Redeploy: `cd backend && npx vercel deploy --prod`
+6. Seed data: `python scripts/seed_data.py` and `seed_integrations.py`
 
 ---
 
-## Alternative: Render API
+## Demo login
 
-`render.yaml` is included if you prefer Render over Vercel for the API. See `scripts/deploy-api-render.ps1`.
+- Web: [nexcrm-web.vercel.app/login](https://nexcrm-web.vercel.app/login)
+- `sara@globex.com` / `secret123` / `globex`

@@ -1,10 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { api, type Task } from '../api/client'
 import { useAuth } from '../context/AuthContext'
+import { useSearch } from '../context/SearchContext'
 import { Badge, LoadingBlock, PageTitle, ZohoCard, ZohoInput } from '../components/ui/ZohoUI'
 
 export default function TasksPage() {
   const { user } = useAuth()
+  const { query } = useSearch()
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [title, setTitle] = useState('')
@@ -24,9 +26,20 @@ export default function TasksPage() {
     load()
   }
 
+  async function onDelete(task: Task) {
+    if (!confirm(`Delete task "${task.title}"?`)) return
+    await api.delete(`/tasks/${task.id}`)
+    load()
+  }
+
+  const filtered = tasks.filter((t) => {
+    if (!query.trim()) return true
+    return t.title.toLowerCase().includes(query.toLowerCase())
+  })
+
   return (
     <div>
-      <PageTitle title="Tasks" subtitle="Track and complete your team's to-dos." />
+      <PageTitle title="Tasks" subtitle={`${filtered.length} task${filtered.length === 1 ? '' : 's'}`} />
       <ZohoCard className="p-4 mb-6">
         <form onSubmit={onSubmit} className="flex flex-wrap gap-3 items-end">
           <div className="flex-1 min-w-[200px]">
@@ -38,7 +51,7 @@ export default function TasksPage() {
       </ZohoCard>
       {loading ? <LoadingBlock /> : (
         <div className="space-y-2">
-          {tasks.map((t) => (
+          {filtered.map((t) => (
             <ZohoCard key={t.id} className="p-4 flex items-center gap-4">
               <input type="checkbox" checked={t.status === 'done'} onChange={() => toggleStatus(t)} className="w-4 h-4 accent-[#e42527]" />
               <div className="flex-1">
@@ -46,6 +59,7 @@ export default function TasksPage() {
                 <p className="text-xs text-[#616e88]">Due {t.due_date?.slice(0, 10) || '—'}</p>
               </div>
               <Badge tone={t.status === 'done' ? 'green' : 'amber'}>{t.status}</Badge>
+              <button type="button" onClick={() => onDelete(t)} className="text-xs text-red-600 hover:underline">Delete</button>
             </ZohoCard>
           ))}
         </div>
