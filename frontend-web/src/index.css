@@ -108,6 +108,7 @@ body {
 }
 .zoho-table td {
   @apply px-4 py-3 text-sm border-b border-[#f0f1f4];
+  color: #313949;
 }
 .zoho-table tr:hover td { background: #fafbfc; }
 

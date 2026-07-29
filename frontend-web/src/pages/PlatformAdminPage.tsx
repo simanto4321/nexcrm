@@ -31,23 +31,40 @@ export default function PlatformAdminPage() {
   const [overview, setOverview] = useState<Overview | null>(null)
   const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem(PLATFORM_KEY))
   const [error, setError] = useState('')
-  const [filter, setFilter] = useState<'all' | 'active' | 'suspended'>('all')
+  const [filter, setFilter] = useState<'all' | 'active' | 'suspended'>('active')
 
   useEffect(() => {
+    if (!loggedIn) return
     const token = localStorage.getItem(PLATFORM_KEY)
-    if (token) {
-      platformApi.defaults.headers.common.Authorization = `Bearer ${token}`
-      load()
-    }
-  }, [])
+    if (!token) return
+    platformApi.defaults.headers.common.Authorization = `Bearer ${token}`
+    void load()
+  }, [loggedIn])
 
   async function load() {
-    const [tRes, oRes] = await Promise.all([
-      platformApi.get<TenantListItem[]>('/platform/tenants'),
-      platformApi.get<Overview>('/platform/overview'),
-    ])
-    setTenants(tRes.data)
-    setOverview(oRes.data)
+    try {
+      const tRes = await platformApi.get<TenantListItem[]>('/platform/tenants')
+      setTenants(tRes.data || [])
+      try {
+        const oRes = await platformApi.get<Overview>('/platform/overview')
+        setOverview(oRes.data)
+      } catch {
+        const list = tRes.data || []
+        setOverview({
+          tenant_count: list.length,
+          active_tenants: list.filter((t) => t.status === 'active').length,
+          suspended_tenants: list.filter((t) => t.status === 'suspended').length,
+          total_users: list.reduce((s, t) => s + (t.user_count || 0), 0),
+          total_contacts: list.reduce((s, t) => s + (t.contact_count || 0), 0),
+          total_deals: list.reduce((s, t) => s + (t.deal_count || 0), 0),
+          total_pipeline: list.reduce((s, t) => s + (t.pipeline_value || 0), 0),
+        })
+      }
+    } catch {
+      setError('Could not load workspace database. Please sign in again.')
+      setTenants([])
+      setOverview(null)
+    }
   }
 
   async function onLogin(e: FormEvent) {
@@ -113,12 +130,14 @@ export default function PlatformAdminPage() {
           title="🛡️ Platform console"
           subtitle="Live workspace database across every company on NexCRM."
           action={
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
+              <button type="button" onClick={() => load()} className="btn-zoho-secondary">🔄 Refresh</button>
               <button type="button" onClick={() => nav('/login')} className="btn-zoho-secondary">🔑 Team sign in</button>
               <button type="button" onClick={logout} className="btn-zoho-secondary text-[#e42527]">Log out</button>
             </div>
           }
         />
+        {error && <Alert message={error} tone="error" />}
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
           {cards.map((c) => (
