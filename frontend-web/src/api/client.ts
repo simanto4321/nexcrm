@@ -100,6 +100,12 @@ export interface TenantListItem {
   plan: string
   status: string
   created_at: string
+  user_count?: number
+  contact_count?: number
+  deal_count?: number
+  task_count?: number
+  pipeline_value?: number
+  won_value?: number
 }
 
 export interface TeamMember {

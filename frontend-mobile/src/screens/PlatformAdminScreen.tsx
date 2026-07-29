@@ -25,6 +25,11 @@ type Tenant = {
   company_code: string
   plan: string
   status: string
+  user_count?: number
+  contact_count?: number
+  deal_count?: number
+  pipeline_value?: number
+  won_value?: number
 }
 
 export default function PlatformAdminScreen() {
@@ -98,7 +103,13 @@ export default function PlatformAdminScreen() {
                 <View style={{ flex: 1 }}>
                   <Text style={styles.name}>{item.name}</Text>
                   <Text style={styles.meta}>Code · {item.company_code}</Text>
-                  <Text style={styles.meta}>Plan · {item.plan}</Text>
+                  <Text style={styles.meta}>
+                    👥 {item.user_count ?? 0} · 📇 {item.contact_count ?? 0} · 💼 {item.deal_count ?? 0}
+                  </Text>
+                  <Text style={styles.meta}>
+                    📈 ${Math.round(item.pipeline_value ?? 0).toLocaleString()} · 🏆 $
+                    {Math.round(item.won_value ?? 0).toLocaleString()}
+                  </Text>
                 </View>
                 <Badge text={item.status} tone={item.status === 'active' ? 'success' : 'brand'} />
               </View>

@@ -1,4 +1,4 @@
-# Start NexCRM Android on the FAST emulator (D: only)
+# Start NexCRM Android — movable emulator + Expo app
 $ErrorActionPreference = "Stop"
 $env:ANDROID_HOME = "D:\Android\Sdk"
 $env:ANDROID_SDK_ROOT = "D:\Android\Sdk"
@@ -11,9 +11,19 @@ $env:TMP = "D:\NexCRM\.cache\temp"
 New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
 $env:Path = "D:\Android\Sdk\platform-tools;D:\Android\Sdk\emulator;D:\Android\Android Studio\jbr\bin;" + $env:Path
 
-Write-Host "`n=== NexCRM Android (fast AVD) ===" -ForegroundColor Cyan
+Write-Host "`n=== NexCRM Android (movable emulator) ===" -ForegroundColor Cyan
 
-# Prefer NexCRM_Fast
+# Keep window on-screen and draggable
+$userIni = "D:\Android\.android\avd\NexCRM_Fast.avd\emulator-user.ini"
+@(
+  "window.x = 60",
+  "window.y = 30",
+  "window.scale = 0.32",
+  "resizable.config.id = -1",
+  "posture = 0",
+  "uuid = 0"
+) | Set-Content -Path $userIni -Encoding ASCII
+
 $preferred = "NexCRM_Fast"
 $avds = @( & emulator -list-avds 2>$null | ForEach-Object { $_.ToString().Trim() } | Where-Object { $_ } )
 if ($avds -notcontains $preferred) {
@@ -24,8 +34,18 @@ if ($avds -notcontains $preferred) {
 
 $running = & adb devices 2>$null | Select-String "emulator-"
 if (-not $running) {
-  Write-Host "Starting $preferred ..." -ForegroundColor Yellow
-  Start-Process -FilePath "emulator" -ArgumentList "-avd", $preferred, "-no-snapshot", "-no-boot-anim", "-gpu", "swiftshader_indirect", "-memory", "1536", "-cores", "2", "-no-audio" -WindowStyle Normal
+  Write-Host "Starting $preferred (scale 0.32, title bar visible)..." -ForegroundColor Yellow
+  Start-Process -FilePath "emulator" -ArgumentList @(
+    "-avd", $preferred,
+    "-scale", "0.32",
+    "-skin", "360x740",
+    "-no-snapshot-load",
+    "-no-boot-anim",
+    "-gpu", "swiftshader_indirect",
+    "-memory", "1536",
+    "-cores", "2",
+    "-no-audio"
+  ) -WindowStyle Normal
   adb wait-for-device
   for ($i = 0; $i -lt 60; $i++) {
     Start-Sleep -Seconds 3
@@ -34,9 +54,10 @@ if (-not $running) {
     Write-Host "  booting... ($i)"
   }
 } else {
-  Write-Host "Emulator already running." -ForegroundColor Green
+  Write-Host "Emulator already running. If cropped, close it and re-run D:\Android\Start-NexCRM-Emulator.bat" -ForegroundColor Yellow
 }
 
 Write-Host "`nDemo: sara@globex.com / secret123 / globex"
+Write-Host "Drag the emulator TITLE BAR to move the window.`n"
 Set-Location D:\NexCRM\frontend-mobile
 npx expo start --android
