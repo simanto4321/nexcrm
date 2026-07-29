@@ -35,6 +35,7 @@ export interface Contact {
   phone?: string | null
   email?: string | null
   status?: string | null
+  notes?: string | null
   assigned_to?: number | null
 }
 
@@ -55,10 +56,22 @@ export interface Task {
   status: string
 }
 
+export interface ActivityItem {
+  kind: string
+  title: string
+  detail: string
+  created_at: string
+  entity_id?: number | null
+}
+
 export interface DashboardData {
   total_contacts: number
   deals_by_stage: Record<string, number>
   pending_tasks: number
+  team_count?: number
+  pipeline_value?: number
+  won_value?: number
+  recent_activity?: ActivityItem[]
 }
 
 export interface EmailConfig {
@@ -86,6 +99,38 @@ export interface TenantListItem {
   company_code: string
   plan: string
   status: string
+  created_at: string
+}
+
+export interface TeamMember {
+  id: number
+  tenant_id: number
+  name: string
+  email: string
+  role: string
+  created_at: string
+}
+
+export interface TeamInvite {
+  id: number
+  tenant_id: number
+  email: string
+  role: string
+  status: string
+  invited_by: number | null
+  created_at: string
+}
+
+export interface AppNotification {
+  id: number
+  tenant_id: number
+  user_id: number
+  title: string
+  message: string
+  type: string
+  entity_type?: string | null
+  entity_id?: number | null
+  is_read: boolean
   created_at: string
 }
 

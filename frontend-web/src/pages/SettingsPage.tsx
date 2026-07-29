@@ -26,7 +26,7 @@ export default function SettingsPage() {
         setInviteLink(tgRes.data.invite_link || '')
       })
       .catch(() => {
-        setMsg('Could not load settings. Check you are logged in as tenant admin.')
+        setMsg('Could not load settings. Sign in as a workspace admin to manage Setup.')
         setMsgTone('error')
       })
       .finally(() => setLoading(false))
@@ -88,14 +88,14 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <PageTitle title="Setup" subtitle="Configure email notifications and Telegram integration for your tenant." />
+      <PageTitle title="⚙️ Setup & Checkup" subtitle="Configure email and Telegram alerts, then run a quick checkup." />
       {msg && <Alert message={msg} tone={msgTone} />}
       <div className="grid lg:grid-cols-2 gap-6">
         <ZohoCard className="p-5">
           <div className="flex justify-between items-start mb-4">
-            <h2 className="font-bold">Email Notifications</h2>
+            <h2 className="font-bold">✉️ Email Notifications</h2>
             <Badge tone={emailCfg?.smtp_configured ? 'green' : 'amber'}>
-              {emailCfg?.smtp_configured ? 'Ready' : 'SMTP off'}
+              {emailCfg?.smtp_configured ? 'Ready' : 'Setup needed'}
             </Badge>
           </div>
           <p className="text-sm text-[#616e88] mb-4">
@@ -104,14 +104,14 @@ export default function SettingsPage() {
           <form onSubmit={saveEmail} className="space-y-4">
             <ZohoInput label="Team email" type="email" required value={teamEmail} onChange={(e) => setTeamEmail(e.target.value)} placeholder="team@globex.com" />
             <div className="flex gap-2">
-              <button type="submit" className="btn-zoho flex-1">Save</button>
-              <button type="button" onClick={testEmail} className="btn-zoho-secondary">Test</button>
+              <button type="submit" className="btn-zoho flex-1">💾 Save</button>
+              <button type="button" onClick={testEmail} className="btn-zoho-secondary">🩺 Checkup</button>
             </div>
           </form>
         </ZohoCard>
         <ZohoCard className="p-5">
           <div className="flex justify-between items-start mb-4">
-            <h2 className="font-bold">Telegram Bot</h2>
+            <h2 className="font-bold">✈️ Telegram</h2>
             <Badge tone={telegram?.connected ? 'green' : 'gray'}>
               {telegram?.connected ? 'Linked' : 'Not linked'}
             </Badge>
@@ -120,7 +120,7 @@ export default function SettingsPage() {
             <p className="text-xs text-green-700 mb-3">Bot active: @{telegram.bot_username}</p>
           )}
           {!telegram?.bot_configured && (
-            <p className="text-xs text-amber-700 mb-3">Server bot token not set — ask admin to add TELEGRAM_BOT_TOKEN.</p>
+            <p className="text-xs text-amber-700 mb-3">Telegram bot is not ready yet. Contact your platform administrator.</p>
           )}
           <p className="text-sm text-[#616e88] mb-4">
             Add your bot to a group, then paste the group chat ID below.
@@ -129,8 +129,8 @@ export default function SettingsPage() {
             <ZohoInput label="Group chat ID" required value={chatId} onChange={(e) => setChatId(e.target.value)} placeholder="-1001234567890" />
             <ZohoInput label="Invite link (optional)" value={inviteLink} onChange={(e) => setInviteLink(e.target.value)} placeholder="https://t.me/your_group" />
             <div className="flex gap-2">
-              <button type="submit" className="btn-zoho flex-1">Save</button>
-              <button type="button" onClick={testTelegram} className="btn-zoho-secondary">Test</button>
+              <button type="submit" className="btn-zoho flex-1">💾 Save</button>
+              <button type="button" onClick={testTelegram} className="btn-zoho-secondary">🩺 Checkup</button>
             </div>
           </form>
         </ZohoCard>

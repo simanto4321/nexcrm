@@ -58,6 +58,7 @@ class ContactCreate(BaseModel):
     phone: str | None = Field(None, max_length=64)
     email: str | None = Field(None, max_length=255)
     status: str | None = Field("active", max_length=64)
+    notes: str | None = Field(None, max_length=4000)
     assigned_to: int | None = None
 
 
@@ -66,6 +67,7 @@ class ContactUpdate(BaseModel):
     phone: str | None = Field(None, max_length=64)
     email: str | None = Field(None, max_length=255)
     status: str | None = Field(None, max_length=64)
+    notes: str | None = Field(None, max_length=4000)
     assigned_to: int | None = None
 
 
@@ -76,6 +78,7 @@ class ContactResponse(BaseModel):
     phone: str | None
     email: str | None
     status: str | None
+    notes: str | None = None
     assigned_to: int | None
     created_at: datetime
 
@@ -146,10 +149,75 @@ class TaskResponse(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+class ActivityItem(BaseModel):
+    kind: str
+    title: str
+    detail: str
+    created_at: datetime
+    entity_id: int | None = None
+
+
 class DashboardResponse(BaseModel):
     total_contacts: int
     deals_by_stage: dict[str, int]
     pending_tasks: int
+    team_count: int = 0
+    pipeline_value: float = 0.0
+    won_value: float = 0.0
+    recent_activity: list[ActivityItem] = Field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# Team / invites
+# ---------------------------------------------------------------------------
+
+
+class TeamMemberCreate(BaseModel):
+    name: str = Field(..., min_length=2, max_length=255)
+    email: EmailStr
+    password: str = Field(..., min_length=8, max_length=128)
+    role: str = Field("sales_rep", pattern=r"^(tenant_admin|sales_rep)$")
+
+
+class InviteCreate(BaseModel):
+    email: EmailStr
+    role: str = Field("sales_rep", pattern=r"^(tenant_admin|sales_rep)$")
+
+
+class InviteResponse(BaseModel):
+    id: int
+    tenant_id: int
+    email: str
+    role: str
+    status: str
+    invited_by: int | None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+# ---------------------------------------------------------------------------
+# Notifications
+# ---------------------------------------------------------------------------
+
+
+class NotificationResponse(BaseModel):
+    id: int
+    tenant_id: int
+    user_id: int
+    title: str
+    message: str
+    type: str
+    entity_type: str | None = None
+    entity_id: int | None = None
+    is_read: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class UnreadCountResponse(BaseModel):
+    unread: int
 
 
 # ---------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 
 $ErrorActionPreference = "Stop"
 $apiUrl = "https://nexcrm-api-phi.vercel.app"
-$webUrl = "https://nexcrm-web.vercel.app"
+$webUrl = "https://nexcrm-web-gilt.vercel.app"
 
 Write-Host "`n=== NexCRM Vercel Deploy ===" -ForegroundColor Cyan
 

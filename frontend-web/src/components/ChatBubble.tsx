@@ -33,7 +33,7 @@ export default function ChatBubble() {
       }
       listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
     } catch {
-      setMessages([...next, { role: 'assistant', content: 'Assistant unavailable. Is the backend running?' }])
+      setMessages([...next, { role: 'assistant', content: 'I could not reply right now. Please try again in a moment.' }])
     } finally {
       setLoading(false)
     }
@@ -73,8 +73,8 @@ export default function ChatBubble() {
         >
           <div className="bg-[#e42527] text-white px-4 py-3 flex items-center justify-between shrink-0">
             <div>
-              <p className="font-bold text-sm">Zia — AI Assistant</p>
-              <p className="text-[10px] opacity-80">Powered by Ollama</p>
+              <p className="font-bold text-sm">💬 NexCRM Assistant</p>
+              <p className="text-[10px] opacity-80">Ask about contacts, deals & tasks</p>
             </div>
             <div className="flex items-center gap-2">
               {token && (
@@ -98,7 +98,7 @@ export default function ChatBubble() {
             <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[#f6f7fb]">
               <p className="text-4xl mb-3">💬</p>
               <p className="font-semibold text-[#313949]">Sign in to use AI chat</p>
-              <p className="text-sm text-[#616e88] mt-2 mb-6">The assistant floats on every page after you log in.</p>
+              <p className="text-sm text-[#616e88] mt-2 mb-6">Sign in to chat about your pipeline, contacts, and tasks.</p>
               <Link to="/login" className="btn-zoho px-6 py-2.5" onClick={() => setOpen(false)}>
                 Sign In
               </Link>

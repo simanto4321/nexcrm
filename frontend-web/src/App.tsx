@@ -8,11 +8,13 @@ import ContactsPage from './pages/ContactsPage'
 import DashboardPage from './pages/DashboardPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
+import NotificationsPage from './pages/NotificationsPage'
 import PipelinePage from './pages/PipelinePage'
 import PlatformAdminPage from './pages/PlatformAdminPage'
 import SettingsPage from './pages/SettingsPage'
 import SignupPage from './pages/SignupPage'
 import TasksPage from './pages/TasksPage'
+import TeamPage from './pages/TeamPage'
 
 export default function App() {
   return (
@@ -30,6 +32,8 @@ export default function App() {
             <Route path="/contacts" element={<ContactsPage />} />
             <Route path="/pipeline" element={<PipelinePage />} />
             <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/settings" element={<AdminRoute><SettingsPage /></AdminRoute>} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

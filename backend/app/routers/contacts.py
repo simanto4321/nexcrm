@@ -62,6 +62,7 @@ def create_contact(
         phone=body.phone,
         email=body.email,
         status=body.status,
+        notes=body.notes,
         assigned_to=assigned_to,
     )
     db.add(contact)

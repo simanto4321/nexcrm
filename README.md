@@ -8,9 +8,10 @@ Multi-tenant CRM capstone — **full stack on Vercel** + GitHub Pages mirror.
 
 | | URL |
 |---|-----|
-| **Web app** | [nexcrm-web.vercel.app](https://nexcrm-web.vercel.app) |
+| **Web app** | [nexcrm-web-gilt.vercel.app](https://nexcrm-web-gilt.vercel.app) |
 | **API** | [nexcrm-api-phi.vercel.app](https://nexcrm-api-phi.vercel.app) |
 | **API docs** | [nexcrm-api-phi.vercel.app/docs](https://nexcrm-api-phi.vercel.app/docs) |
+| **Android (Expo)** | See [`frontend-mobile/README.md`](frontend-mobile/README.md) — SDK on `D:\Android` |
 
 **Mirror (GitHub Pages):** [simanto4321.github.io/nexcrm](https://simanto4321.github.io/nexcrm/)
 
@@ -21,14 +22,16 @@ Multi-tenant CRM capstone — **full stack on Vercel** + GitHub Pages mirror.
 | Tenant admin (Globex) | `sara@globex.com` | `secret123` | `globex` |
 | Sales rep (Globex) | `tom@globex.com` | `secret123` | `globex` |
 | Tenant admin (Acme) | `jane@acme.com` | `secret123` | `acme` |
-| Platform super-admin | `admin@nexcrm.com` | `admin123` | [Platform Console](https://nexcrm-web.vercel.app/platform-admin) |
+| Platform super-admin | `admin@nexcrm.com` | `admin123` | [Platform Console](https://nexcrm-web-gilt.vercel.app/platform-admin) |
 
 ### CRM features (web)
 
-- Dashboard — contacts, deals by stage, pending tasks
-- **Contacts** — create, edit, delete, search
+- Dashboard — contacts, deals by stage, pending tasks, pipeline value, recent activity
+- **Contacts** — create, edit, delete, search, notes
 - **Deals** — Kanban pipeline, drag stages, create/edit/delete
 - **Tasks** — create, complete, delete
+- **Team** — list members, create sales reps/admins, pending invites
+- **Notifications** — in-app alerts (plus email/Telegram from Settings)
 - **Settings** — email + Telegram (tenant admin)
 - **AI chat** — floating bubble with voice (FAQ fallback on Vercel)
 - **Platform admin** — suspend/activate tenants

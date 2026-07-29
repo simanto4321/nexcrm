@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { apiErrorMessage } from '../api/errors'
 import { useAuth } from '../context/AuthContext'
 import { AuthLayout, AuthLink } from '../components/layout/AuthLayout'
 import { Alert, ZohoInput } from '../components/ui/ZohoUI'
@@ -22,8 +23,8 @@ export default function SignupPage() {
     try {
       await signup(form)
       nav('/dashboard')
-    } catch {
-      setError('Signup failed — company code may already exist.')
+    } catch (err) {
+      setError(apiErrorMessage(err, 'Signup failed.'))
     } finally {
       setLoading(false)
     }
@@ -38,9 +39,9 @@ export default function SignupPage() {
 
   return (
     <AuthLayout
-      title="Get started with your free trial"
-      subtitle="Create your tenant workspace in minutes."
-      footer={<><span className="text-[#616e88]">Have an account? </span><AuthLink to="/login">Sign in</AuthLink></>}
+      title="🚀 Get started free"
+      subtitle="Create your company workspace in minutes."
+      footer={<><span className="text-[#616e88]">Have an account? </span><AuthLink to="/login">🔑 Sign in</AuthLink></>}
     >
       <form onSubmit={onSubmit} className="space-y-4">
         {error && <Alert message={error} tone="error" />}

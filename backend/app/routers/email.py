@@ -59,13 +59,23 @@ def send_test_email(
     db: Session = Depends(get_db),
 ):
     """Send a test notification to the tenant team_email."""
+    config = get_tenant_email_config(db, ctx.tenant_id)
+    if not config or not config.team_email:
+        return EmailTestResponse(sent=False, message="Set a team email in Settings and save first.")
+
     sent = send_team_notification(
         db,
         ctx.tenant_id,
         subject=f"[{ctx.tenant.name}] NexCRM test email",
         body=f"This is a test notification from NexCRM for {ctx.tenant.name}.\n",
     )
-    return EmailTestResponse(sent=sent, message="Test email sent" if sent else "Email not sent - check GMAIL_* env vars and team_email config")
+    from app.config import settings
+
+    if sent and settings.email_simulate_mode:
+        return EmailTestResponse(sent=True, message=f"Test email sent to {config.team_email} (demo simulate mode).")
+    if sent:
+        return EmailTestResponse(sent=True, message=f"Test email sent to {config.team_email}.")
+    return EmailTestResponse(sent=False, message="Email not sent — check SMTP/Gmail configuration on the server.")
 
 
 def _smtp_ok() -> bool:

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { apiErrorMessage } from '../api/errors'
 import { useAuth } from '../context/AuthContext'
 import { AuthLayout, AuthLink } from '../components/layout/AuthLayout'
 import { Alert, ZohoInput } from '../components/ui/ZohoUI'
@@ -20,8 +21,8 @@ export default function LoginPage() {
     try {
       await login(email, password, companyCode)
       nav('/dashboard')
-    } catch {
-      setError('Invalid credentials or suspended tenant.')
+    } catch (err) {
+      setError(apiErrorMessage(err, 'Sign in failed.'))
     } finally {
       setLoading(false)
     }
@@ -34,9 +35,9 @@ export default function LoginPage() {
       footer={
         <>
           <span className="text-[#616e88]">No account? </span>
-          <AuthLink to="/signup">Get started free</AuthLink>
+          <AuthLink to="/signup">🚀 Get started free</AuthLink>
           <p className="mt-3 text-xs text-[#616e88]">
-            <AuthLink to="/platform-admin">Platform administrator</AuthLink>
+            <AuthLink to="/platform-admin">🛡️ Platform administrator</AuthLink>
           </p>
         </>
       }

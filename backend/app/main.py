@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
-from app.routers import auth, chatbot, contacts, dashboard, deals, email, platform, tasks, telegram
+from app.routers import auth, chatbot, contacts, dashboard, deals, email, notifications, platform, tasks, team, telegram
 
 app = FastAPI(
     title="NexCRM API",
@@ -32,6 +32,8 @@ app.include_router(chatbot.router)
 app.include_router(telegram.router)
 app.include_router(email.router)
 app.include_router(platform.router)
+app.include_router(team.router)
+app.include_router(notifications.router)
 
 
 @app.get("/")

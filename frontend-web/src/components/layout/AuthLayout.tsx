@@ -18,10 +18,10 @@ export function AuthLayout({
       <div className="flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md page-fade">
           <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-lg bg-[#e42527] flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 shadow-xl shadow-red-900/50">
+            <div className="brand-mark w-14 h-14 rounded-xl text-2xl mx-auto mb-4">
               N
             </div>
-            <h1 className="text-2xl font-bold">{title}</h1>
+            <h1 className="font-display text-3xl text-white">{title}</h1>
             <p className="text-sm text-slate-400 mt-2">{subtitle}</p>
           </div>
           <div className="zoho-card p-8 text-[#313949]">

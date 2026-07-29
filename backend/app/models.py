@@ -191,7 +191,25 @@ class Contact(Base):
     phone: Mapped[str | None] = mapped_column(String(64), nullable=True)
     email: Mapped[str | None] = mapped_column(String(255), nullable=True)
     status: Mapped[str | None] = mapped_column(String(64), default="active", nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     assigned_to: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class Notification(Base):
+    """In-app notification (CSE327-style), tenant-scoped per user."""
+
+    __tablename__ = "notifications"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    type: Mapped[str] = mapped_column(String(64), default="general", nullable=False)
+    entity_type: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    entity_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
 
 

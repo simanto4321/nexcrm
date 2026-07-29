@@ -3,7 +3,7 @@ import { api, type Contact } from '../api/client'
 import { useSearch } from '../context/SearchContext'
 import { Alert, Badge, LoadingBlock, PageTitle, ZohoCard, ZohoInput, ZohoSelect } from '../components/ui/ZohoUI'
 
-const emptyForm = { name: '', email: '', phone: '', status: 'lead' }
+const emptyForm = { name: '', email: '', phone: '', status: 'lead', notes: '' }
 
 export default function ContactsPage() {
   const { query } = useSearch()
@@ -28,7 +28,8 @@ export default function ContactsPage() {
       c.name.toLowerCase().includes(q) ||
       (c.email || '').toLowerCase().includes(q) ||
       (c.phone || '').toLowerCase().includes(q) ||
-      (c.status || '').toLowerCase().includes(q)
+      (c.status || '').toLowerCase().includes(q) ||
+      (c.notes || '').toLowerCase().includes(q)
     )
   })
 
@@ -40,7 +41,13 @@ export default function ContactsPage() {
 
   function openEdit(c: Contact) {
     setEditing(c)
-    setForm({ name: c.name, email: c.email || '', phone: c.phone || '', status: c.status || 'lead' })
+    setForm({
+      name: c.name,
+      email: c.email || '',
+      phone: c.phone || '',
+      status: c.status || 'lead',
+      notes: c.notes || '',
+    })
     setShowForm(true)
   }
 
@@ -103,6 +110,15 @@ export default function ContactsPage() {
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </ZohoSelect>
+            <label className="sm:col-span-2 block">
+              <span className="block text-xs font-semibold text-[#616e88] mb-1.5">Notes</span>
+              <textarea
+                className="zoho-input min-h-[80px]"
+                value={form.notes}
+                onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                placeholder="Call notes, preferences, next steps..."
+              />
+            </label>
             <button type="submit" className="sm:col-span-2 btn-zoho py-2.5">{editing ? 'Update' : 'Save'}</button>
           </form>
         </ZohoCard>
@@ -121,6 +137,7 @@ export default function ContactsPage() {
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Status</th>
+                <th>Notes</th>
                 <th className="w-28">Actions</th>
               </tr>
             </thead>
@@ -142,6 +159,7 @@ export default function ContactsPage() {
                       {c.status}
                     </Badge>
                   </td>
+                  <td className="text-[#616e88] max-w-[160px] truncate" title={c.notes || ''}>{c.notes || '—'}</td>
                   <td>
                     <div className="flex gap-1">
                       <button type="button" onClick={() => openEdit(c)} className="text-xs btn-zoho-secondary py-1 px-2">Edit</button>

@@ -59,7 +59,7 @@ export default function PlatformAdminPage() {
 
   if (!loggedIn) {
     return (
-      <AuthLayout title="Platform Console" subtitle="Super-admin access to manage all tenants." footer={<AuthLink to="/login">← Tenant sign in</AuthLink>}>
+      <AuthLayout title="🛡️ Platform Console" subtitle="Administrator access to manage all workspaces." footer={<AuthLink to="/login">← Team sign in</AuthLink>}>
         <form onSubmit={onLogin} className="space-y-4">
           {error && <Alert message={error} tone="error" />}
           <ZohoInput label="Admin email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -79,7 +79,7 @@ export default function PlatformAdminPage() {
           subtitle={`${tenants.length} workspaces on the platform.`}
           action={
             <div className="flex gap-2">
-              <button type="button" onClick={() => nav('/login')} className="btn-zoho-secondary">Tenant app</button>
+              <button type="button" onClick={() => nav('/login')} className="btn-zoho-secondary">🔑 Team sign in</button>
               <button type="button" onClick={logout} className="btn-zoho-secondary text-[#e42527]">Log out</button>
             </div>
           }

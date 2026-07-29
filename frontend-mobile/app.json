@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "NexCRM",
+    "slug": "nexcrm-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "nexcrm",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#080c18"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nexcrm.mobile"
+    },
+    "android": {
+      "package": "com.nexcrm.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#080c18",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "apiUrl": "https://nexcrm-api-phi.vercel.app"
+    }
+  }
+}

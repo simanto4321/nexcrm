@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.auth_utils import create_access_token, hash_password, verify_password
 from app.database import get_db
 from app.dependencies import get_current_tenant_user, TenantUserContext
-from app.models import Tenant, TenantSettings, TenantStatus, User, UserRole
+from app.models import Tenant, TenantEmailConfig, TenantSettings, TenantStatus, User, UserRole
 from app.schemas import LoginRequest, MessageResponse, SignupRequest, TokenResponse, UserResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -40,8 +40,14 @@ def signup(body: SignupRequest, db: Session = Depends(get_db)):
     )
     db.add(admin)
 
-    # Default tenant settings row
     db.add(TenantSettings(tenant_id=tenant.id))
+    db.add(
+        TenantEmailConfig(
+            tenant_id=tenant.id,
+            team_email=body.admin_email,
+            notifications_enabled=True,
+        )
+    )
     db.commit()
     db.refresh(admin)
     db.refresh(tenant)
