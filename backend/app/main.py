@@ -1,10 +1,7 @@
 """NexCRM FastAPI application entry point."""
 
-from pathlib import Path
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.routers import auth, chatbot, contacts, dashboard, deals, email, notifications, platform, tasks, team, telegram
@@ -49,8 +46,3 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "ok", "service": "nexcrm-backend"}
-
-
-_voice_demo = Path(__file__).resolve().parents[2] / "voice-demo"
-if _voice_demo.is_dir():
-    app.mount("/voice-demo", StaticFiles(directory=str(_voice_demo), html=True), name="voice-demo")

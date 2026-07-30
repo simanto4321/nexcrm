@@ -13,16 +13,18 @@ frontend-web/.env
 frontend-web/.env.local
 frontend-web/.env.production
 
-# Caches & local data (D-drive policy)
+# Local caches / tools (not part of the product)
 .cache/
 .ollama/
 ollama/
+voice-demo/
+mobile-app/
 
-# Node
+# Node / Expo
 node_modules/
 frontend-web/dist/
-mobile-app/node_modules/
-mobile-app/.expo/
+frontend-mobile/.expo/
+frontend-mobile/.claude/
 
 # IDE / OS
 .vscode/
