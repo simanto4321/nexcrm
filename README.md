@@ -1,8 +1,16 @@
 # NexCRM
 
-Multi-tenant CRM capstone — **full stack on Vercel** + GitHub Pages mirror.
+Multi-tenant CRM capstone — **Python API** + **JavaScript** web & Android (Expo).
 
 **Repository:** [github.com/simanto4321/nexcrm](https://github.com/simanto4321/nexcrm)
+
+### Languages
+
+| Part | Language | Folder |
+|------|----------|--------|
+| API / database | **Python** (FastAPI) | `backend/` |
+| Website | **JavaScript** (React) | `frontend-web/` |
+| Android app | **JavaScript** (React Native / Expo) | `frontend-mobile/` |
 
 ## Live demo (Vercel — primary)
 
